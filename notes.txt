@@ -1,0 +1,160 @@
+
+`::' means "has type of"
+i.e. "HELLO!" :: [Char] 
+has a type of list of Char
+
+`=>' means Class Constraints
+i.e. : (==) :: (Eq a) => a -> a -> Bool  
+so a and a must be in the class of `Eq`
+
+`->' separates parameters and return type
+i.e. factorial :: Integer -> Integer  
+
+
+List
+-----
+
+[1,2,3] is syntactic sugar for 1:2:3:[]
+
+
+
+Typeclasses
+--------------
+Eq - supports equality testing
+
+Ord - Types w/ ordering
+
+Show - Can be presented as string
+
+Read - Takes a string and returns a type of type Read
+
+Enum - sequential ordered types (can be enumerated)
+
+Bounded - have upper and lower bound
+
+Num - Numeric typeclass (members act like numbers)
+
+Integral -  Int and Integer
+
+Floating - Float and Double
+
+Multiple Typeclasses
+--------------------
+
+replicate' :: (Num i, Ord i) => i -> a -> [a]  
+
+DEFINING FUNCTIONS
+==================
+
+Pattern Matching
+-----------------
+
+function :: (Class Constraint a) => parameter a -> return a
+function parameter = 1
+
+addVectors :: (Num a) => (a, a) -> (a, a) -> (a, a)  
+addVectors (x1, y1) (x2, y2) = (x1 + x2, y1 + y2) 
+
+For lists:
+(x:xs) is a useful pattern
+
+
+As Pattern
+----------
+
+using @ symbol can keep reference to WHOLE list while still working with parts
+
+capital :: String -> String  
+capital "" = "Empty string, whoops!"  
+capital all@(x:xs) = "The first letter of " ++ all ++ " is " ++ [x] 
+
+
+Guards
+------
+
+Boolean expressions to deal with different cases.  OTHERWISE is a keyword that always runs True.
+
+bmiTell :: (RealFloat a) => a -> String  
+bmiTell bmi  
+    | bmi <= 18.5 = "You're underweight, you emo, you!"  
+    | bmi <= 25.0 = "You're supposedly normal. Pffft, I bet you're ugly!"  
+    | bmi <= 30.0 = "You're fat! Lose some weight, fatty!"  
+    | otherwise   = "You're a whale, congratulations!" 
+
+Where
+-----
+
+Using where to define names or functions.  Doesn't pollute global namespace.  Syntactic construct (NOT expression)
+
+    bmiTell :: (RealFloat a) => a -> a -> String  
+    bmiTell weight height  
+        | bmi <= skinny = "You're underweight, you emo, you!"  
+        | bmi <= normal = "You're supposedly normal. Pffft, I bet you're ugly!"  
+        | bmi <= fat    = "You're fat! Lose some weight, fatty!"  
+        | otherwise     = "You're a whale, congratulations!"  
+        where bmi = weight / height ^ 2  
+              skinny = 18.5  
+              normal = 25.0  
+              fat = 30.0  
+
+Can also use where to pattern match:
+
+    ...  
+    where bmi = weight / height ^ 2  
+          (skinny, normal, fat) = (18.5, 25.0, 30.0)  
+
+Let
+---
+
+A binding but is EXPRESSION (returns value) w/ form:
+
+let <bindings> in <expression>
+
+    cylinder :: (RealFloat a) => a -> a -> a  
+    cylinder r h = 
+        let sideArea = 2 * pi * r * h  
+            topArea = pi * r ^2  
+        in  sideArea + 2 * topArea  
+
+EXpression-y proof
+
+    ghci> 4 * (let a = 9 in a + 1) + 2  
+    42  
+
+inline w/ commas
+
+	ghci> (let a = 100; b = 200; c = 300 in a*b*c, let foo="Hey "; bar = "there!" in foo ++ bar)  
+	(6000000,"Hey there!") 
+
+Use in list comprehension (no "in"):
+
+    calcBmis :: (RealFloat a) => [(a, a)] -> [a]  
+    calcBmis xs = [bmi | (w, h) <- xs, let bmi = w / h ^ 2]  
+
+
+Case Expressions
+----------------
+
+Syntax:
+
+    case expression of pattern -> result  
+                       pattern -> result  
+                       pattern -> result  
+                       ...  
+
+Example:
+
+	describeList :: [a] -> String  
+	describeList xs = "The list is " ++ case xs of [] -> "empty."  
+	                                               [x] -> "a singleton list."   
+	                                               xs -> "a longer list." 
+
+
+
+Useful functions
+----------------
+
+ghci> head' [4,5,6]  
+4  
+maximum
+
